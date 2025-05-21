@@ -1,32 +1,37 @@
 import cv2
+import os
 
 from ultralytics import YOLO
 from car import Car
+import time
 
+WIDTH = 1920
+HEIGHT = 1080
 epsilon = 8
-to_close_distance = 8
 to_near_distance = 16
-ideal_y = 128 - (to_near_distance - to_close_distance)/2 - to_close_distance
+to_far_distance = 8
+ideal_y = (to_near_distance - to_far_distance)/2 + to_near_distance
+print(f"ideal_y = {ideal_y}")
 
-model = YOLO("yolov8n.pt") 
+model = YOLO("yolov8n.pt")
 car = Car()
 
 # Open camera
 cap = cv2.VideoCapture(0)
 
 # Set video resolution
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 128)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 128)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, WIDTH)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, HEIGHT)
 
 while True:
     # Read frame from camera
     ret, frame = cap.read()
 
-    results = model(frame, imgsz=128)
+    results = model(frame, imgsz=128, verbose=False)
 
     # results = model(frame)
     boxes = results[0].boxes
-    x, y1 = 0, 0
+    x, y1 = 0, -100000000000000
     detected_person = False
 
     for box in boxes:
@@ -36,25 +41,47 @@ while True:
 
             _x1, _y1, _x2, _y2 = box.xyxy[0].tolist()
             _x = (_x1 + _x2) / 2
-            if abs(x-64) > abs(_x-64):
+
+            print(f"Detected: {_x}, {_y1}")
+
+            if abs(x-WIDTH/2) > abs(_x-WIDTH/2) and abs(y1-ideal_y) > abs(_y1-ideal_y):
                 x = _x
-            if abs(y1-ideal_y) > abs(_y1-ideal_y):
                 y1 = _y1
 
+    print(f"x, y1 = {x}, {y1}, detected_person = {detected_person}", end="")
+
     if detected_person:
-        if x < (64 - epsilon):
-            car.turn_left(70)
-        elif x > (64 + epsilon):
-            car.turn_right(70) 
-        else:
+        # if x < (WIDTH/2 - epsilon):
+        #     car.turn_left(70)
+        #     time.sleep(0.1)
+        #     print(f" left", end="")
+        #     car.stop()
+            
+        # elif x > (WIDTH/2 + epsilon):
+        #     car.turn_right(70)
+        #     time.sleep(0.1)
+        #     print(f" right", end="")
+        #     car.stop()
+
+        if y1 < (ideal_y - (to_near_distance - to_far_distance)/2):
+            car.move_backward(70)
+            time.sleep(0.5)
             car.stop()
+            print(f" backward", end="")
 
+        if y1 > (ideal_y + (to_near_distance - to_far_distance)/2):
+           car.move_forward(70)
+           time.sleep(0.5)
+           car.stop()
+           print(f" forward", end="")
+        
+    
+    # save frame
+    os.makedirs("pictures", exist_ok=True)
+    results[0].save(f"pictures/frame_{time.time()}.jpg")
 
-        #if y1 > (128 - to_close_distance):
-        #    car.move_backward(70)
+    print(f"")
 
-        #if y1 < (128 - to_near_distance):
-        #   car.move_forward(70)
 
     # If frame is not read correctly, break
     if not ret: 

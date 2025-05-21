@@ -8,8 +8,8 @@ model = YOLO("yolov8n.pt")
 cap = cv2.VideoCapture(0)
 
 # Set video resolution
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 128)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 128)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
 while True:
     # Read frame from camera
