@@ -4,6 +4,7 @@ import threading
 class LatestFrameCapture:
     def __init__(self, src=0, width=None, height=None):
         self.cap = cv2.VideoCapture(src)
+        print("Frame rate: ", self.cap.get(cv2.CAP_PROP_FPS))
         if not self.cap.isOpened():
             raise RuntimeError("Failed to open camera.")
 
@@ -11,6 +12,8 @@ class LatestFrameCapture:
             self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
         if height:
             self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+        self.cap.set(cv2.CAP_PROP_FPS, 60)
+        self.cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'));
 
         self.ret = False
         self.frame = None
@@ -30,6 +33,7 @@ class LatestFrameCapture:
     def read(self):
         with self.lock:
             return self.ret, self.frame.copy() if self.frame is not None else None
+            # return self.ret, self.frame        
 
     def is_opened(self):
         return self.cap.isOpened()
