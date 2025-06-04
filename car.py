@@ -12,25 +12,34 @@ class Car:
         self.ser.flushOutput()
 
     def move_forward(self, speed):
-        self.ser.write(b'{"N":3,"D1":3,"D2":' + str(speed).encode() + b'}\r\n')
+        self.set_speed(l=speed, r=speed)
 
     def move_backward(self, speed):
-        self.ser.write(b'{"N":3,"D1":4,"D2":' + str(speed).encode() + b'}\r\n')
+        self.set_speed(l=-speed, r=-speed)
 
     def turn_left(self, speed):
-        self.ser.write(b'{"N":3,"D1":1,"D2":' + str(speed).encode() + b'}\r\n')
+        self.set_speed(l=-speed, r=speed)
 
     def turn_right(self, speed):
-        self.ser.write(b'{"N":3,"D1":2,"D2":' + str(speed).encode() + b'}\r\n')
+        self.set_speed(l=speed, r=-speed)
 
     def stop(self):
-        self.ser.write(b'{"N":1,"D1":0,"D2":0,"D3":0}\r\n')
+        self.set_speed(l=0, r=0)
+
+    def set_speed(self, l, r):
+        """
+        l, r: -100 - 100
+        """
+        l = int(l * 256 / 100)
+        r = int(r * 256 / 100)
+        self.ser.write(str(r).encode() + b' ' + str(l).encode() + b'\n')
 
     def close(self):
         self.ser.close()
 
 if __name__ == "__main__":
     car = Car()
+    
     car.move_forward(70)
     time.sleep(0.6)
     car.move_backward(70)
