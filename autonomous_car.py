@@ -48,8 +48,10 @@ try:
                     y1 = _y1
 
         if detected_person > 0:
+            car.set_LED(0, 255, 0)
             print(f"t = {time.time():.3f}, persons = {detected_person}, x = {x:.3f}, y1 = {y1:.3f}")
         else:
+            car.set_LED(255, 0, 0)
             print(f"t = {time.time():.3f}, persons = {detected_person}")
 
         # save frame
@@ -83,5 +85,6 @@ try:
 except KeyboardInterrupt:
     print("Keyboard interrupt")
 finally:
+    car.set_LED(0, 0, 0)
     car.stop()
     cap.stop()
