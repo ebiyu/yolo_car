@@ -60,28 +60,28 @@ try:
 
         if detected_person > 0:
             center_x = WIDTH/2
-            
-            # turn left or right
-            if x < (center_x - epsilon):
-                car.turn_left(70)
-                status = "TURN_LEFT"
-                continue                
-            elif x > (center_x + epsilon):
-                car.turn_right(70)
-                status = "TURN_RIGHT"
-                continue
 
-            # go forward or backward
+            # decide direction
+            x_direction = 0 # 0: center, 1: left, -1: right
+            if x < (center_x - epsilon):
+                x_direction = 1
+            elif x > (center_x + epsilon):
+                x_direction = -1
+            
+            y_direction = 0 # 0: center, 1: forward, -1: back
             if y1 < (ideal_y - (to_near_distance - to_far_distance)/2):
-                car.move_backward(100)
-                status = "BACKWARD"
-                continue
+                y_direction = -1
             elif y1 > (ideal_y + (to_near_distance - to_far_distance)/2):
-                car.move_forward(100)
-                status = "FORWARD"
-                continue
-        
-        car.stop()
+                y_direction = 1
+
+            car.set_speed(
+                l=140 * y_direction - 70 * x_direction,
+                r=140 * y_direction + 70 * x_direction,
+            )
+
+        else:
+            car.stop()
+
 except KeyboardInterrupt:
     print("Keyboard interrupt")
 finally:
