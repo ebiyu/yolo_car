@@ -97,7 +97,7 @@ void loop() {
               r = constrain(r, -255, 255);
               b = constrain(b, -255, 255);
 
-              led.setPixelColor(0, led.Color(g, r, b));
+              led.setPixelColor(0, led.Color(r, g, b));
               led.show();
             }
         } else {
