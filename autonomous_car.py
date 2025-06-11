@@ -14,7 +14,7 @@ to_far_distance = HEIGHT / 3
 ideal_y = (to_near_distance + to_far_distance)/2
 print(f"ideal_y = {ideal_y}")
 
-model = YOLO("yolov8n.pt")
+model = YOLO("yolov5nu.pt")
 car = Car()
 
 # Open camera
