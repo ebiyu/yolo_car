@@ -28,10 +28,8 @@ class Car:
 
     def set_speed(self, l, r):
         """
-        l, r: -100 - 100
+        l, r: -255 - 255
         """
-        l = int(l * 256 / 100)
-        r = int(r * 256 / 100)
         self.ser.write(b'M' + str(r).encode() + b' ' + str(l).encode() + b'\n')
 
     def set_LED(self, r, g, b):
