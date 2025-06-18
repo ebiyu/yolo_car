@@ -74,9 +74,13 @@ try:
             elif y1 > (ideal_y + (to_near_distance - to_far_distance)/2):
                 y_direction = 1
 
-            car.set_speed(
-                l=140 * y_direction - 70 * x_direction,
-                r=140 * y_direction + 70 * x_direction,
+            # car.set_speed(
+            #     l=140 * y_direction - 70 * x_direction,
+            #     r=140 * y_direction + 70 * x_direction,
+            # )
+            car.move(
+                vertical_speed=140 * y_direction,
+                horizontal_speed=-70 * x_direction,
             )
 
         else:

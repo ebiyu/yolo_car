@@ -10,6 +10,9 @@ class Car:
         print(self.ser.name)
         self.ser.flushInput()
         self.ser.flushOutput()
+    
+    def move(self, vertical_speed, horizontal_speed):
+        self.set_speed(l=vertical_speed + horizontal_speed, r=vertical_speed - horizontal_speed)
 
     def move_forward(self, speed):
         self.set_speed(l=speed, r=speed)
