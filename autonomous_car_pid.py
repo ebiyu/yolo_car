@@ -100,9 +100,9 @@ try:
                     y1 = _y1
 
         if detected_person > 0:
-            car.set_LED(0, 255, 0)
+            car.set_LED(0, 255, 0) # green
         else:
-            car.set_LED(255, 0, 0)
+            car.set_LED(255, 0, 0) # red
 
         # save frame
         if args.save_image:
