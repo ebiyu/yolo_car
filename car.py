@@ -33,7 +33,7 @@ class Car:
         """
         l, r: -255 - 255
         """
-        self.ser.write(b'M' + str(r).encode() + b' ' + str(l).encode() + b'\n')
+        self.ser.write(b'M' + str(int(r)).encode() + b' ' + str(int(l)).encode() + b'\n')
 
     def set_LED(self, r, g, b):
         """
