@@ -5,6 +5,7 @@ from latest_camera_capture import LatestFrameCapture
 from ultralytics import YOLO
 from car import Car
 import time
+import argparse
 
 WIDTH = 640
 HEIGHT = 480
@@ -13,6 +14,12 @@ to_near_distance = HEIGHT / 2
 to_far_distance = HEIGHT / 3
 ideal_y = (to_near_distance + to_far_distance)/2
 print(f"ideal_y = {ideal_y}")
+
+parser = argparse.ArgumentParser(description="Autonomous Car PID Controller")
+parser.add_argument('--no-move', action='store_true', help='Do not move the car (dry run)')
+parser.add_argument('--save-image', action='store_true', help='Save images during operation')
+args = parser.parse_args()
+
 
 model = YOLO("yolov5nu.pt")
 car = Car()
@@ -96,8 +103,9 @@ try:
             car.set_LED(255, 0, 0)
 
         # save frame
-        # os.makedirs("pictures", exist_ok=True)
-        # results[0].save(f"pictures/frame_{time.time()}.jpg")
+        if args.save_image:
+            os.makedirs("pictures", exist_ok=True)
+            results[0].save(f"pictures/frame_{time.time()}.jpg")
 
         if detected_person > 0:
             center_x = WIDTH/2
@@ -113,10 +121,11 @@ try:
             )
 
 
-            car.move(
-                vertical_speed=vertical_output,
-                horizontal_speed=horizontal_output,
-            )
+            if not args.no_move:
+                car.move(
+                    vertical_speed=vertical_output,
+                    horizontal_speed=horizontal_output,
+                )
 
         else:
             print(f"t = {time.time():.3f}, persons = {detected_person}")
