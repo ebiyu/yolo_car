@@ -62,8 +62,8 @@ cap = LatestFrameCapture(src=0, width=WIDTH, height=HEIGHT)
 
 status = "STOP"
 
-pid_horizontal = PIDController(kp=0.01, ki=0, kd=0, setpoint=WIDTH / 2)
-pid_vertical = PIDController(kp=0.01, ki=0, kd=0, setpoint=HEIGHT * 5 / 12)
+pid_horizontal = PIDController(kp=-0.3, ki=0, kd=0.01, setpoint=WIDTH / 2)
+pid_vertical = PIDController(kp=-1.5, ki=0, kd=0.1, setpoint=HEIGHT * 3 / 12)
 
 try:
     while True:
@@ -92,10 +92,8 @@ try:
 
         if detected_person > 0:
             car.set_LED(0, 255, 0)
-            print(f"t = {time.time():.3f}, persons = {detected_person}, x = {x:.3f}, y1 = {y1:.3f}")
         else:
             car.set_LED(255, 0, 0)
-            print(f"t = {time.time():.3f}, persons = {detected_person}")
 
         # save frame
         # os.makedirs("pictures", exist_ok=True)
@@ -107,29 +105,21 @@ try:
             horizontal_output = pid_horizontal.update(x)
             vertical_output = pid_vertical.update(y1)
 
-            # # decide direction
-            # x_direction = 0 # 0: center, 1: left, -1: right
-            # if x < (center_x - epsilon):
-            #     x_direction = 1
-            # elif x > (center_x + epsilon):
-            #     x_direction = -1
-            
-            # y_direction = 0 # 0: center, 1: forward, -1: back
-            # if y1 < (ideal_y - (to_near_distance - to_far_distance)/2):
-            #     y_direction = -1
-            # elif y1 > (ideal_y + (to_near_distance - to_far_distance)/2):
-            #     y_direction = 1
+            print(
+                f"t = {time.time():.3f}, persons = {detected_person}, "
+                f"x = {x:.3f}, y1 = {y1:.3f}, "
+                f"PID_h: {x:.3f} -> {horizontal_output:.3f}, "
+                f"PID_v: {y1:.3f} -> {vertical_output:.3f}"
+            )
 
-            # car.set_speed(
-            #     l=140 * y_direction - 70 * x_direction,
-            #     r=140 * y_direction + 70 * x_direction,
-            # )
+
             car.move(
                 vertical_speed=vertical_output,
                 horizontal_speed=horizontal_output,
             )
 
         else:
+            print(f"t = {time.time():.3f}, persons = {detected_person}")
             car.stop()
 
 except KeyboardInterrupt:
