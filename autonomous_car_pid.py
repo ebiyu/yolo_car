@@ -69,13 +69,15 @@ cap = LatestFrameCapture(src=0, width=WIDTH, height=HEIGHT)
 
 status = "STOP"
 
-pid_horizontal = PIDController(kp=-0.3, ki=0, kd=0.01, setpoint=WIDTH / 2)
-pid_vertical = PIDController(kp=-1.5, ki=0, kd=0.1, setpoint=HEIGHT * 3 / 12)
+pid_horizontal = PIDController(kp=-0.3, ki=0, kd=0.01, setpoint=240)
+pid_vertical = PIDController(kp=-1.5, ki=0, kd=0.1, setpoint=100)
 
 try:
     while True:
         # Read frame from camera
         ret, frame = cap.read()
+        # frameを左に90度回転させて
+        frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
 
         # print(f"Frame captured at: {time.time()}")
 
